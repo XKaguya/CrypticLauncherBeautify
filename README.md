@@ -32,7 +32,7 @@ You can change almost everything you've seen, But something is defined in the cs
   <ThemeName>Default</ThemeName>
   <ArcIcon>/static/img/publisher.png</ArcIcon>
   <CssLink>/static/css/sto.css?v3.4</CssLink>
-  <ForumString>Forum</ForumString>
+  <ForumString>Forums</ForumString>
   <SupportString>Support</SupportString>
   <AccountGuardString>Account Guard</AccountGuardString>
   <OptionString>Options</OptionString>
