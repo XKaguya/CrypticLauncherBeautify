@@ -9,6 +9,8 @@
 # CrypticLauncherBeautify
 A tool that allows you to change the Cryptic Game Launcher's theme.
 
+Currently only work for Star Trek Online.
+
 ## Usage
 1. Download from [Releases](https://github.com/XKaguya/CrypticLauncherBeautify/releases/latest).
 2. Open Cmd or PowerShell near the `.exe` file.
