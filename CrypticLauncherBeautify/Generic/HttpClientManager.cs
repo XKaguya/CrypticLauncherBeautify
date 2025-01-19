@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using log4net;
 
-namespace CrypticLauncherBeautify.Generic
+namespace StoPasswordBook.Generic
 {
     public class HttpClientManager
     {
@@ -27,6 +27,8 @@ namespace CrypticLauncherBeautify.Generic
                     catch (Exception ex)
                     {
                         Log.Error($"Error initializing HttpClient: {ex.Message}\n{ex.StackTrace}");
+                        MainWindow.UpdateText("ERROR Initializing HTTP client. Please check the log.");
+                        return;
                     }
                 }
                 else
@@ -37,6 +39,7 @@ namespace CrypticLauncherBeautify.Generic
             catch (Exception ex)
             {
                 Log.Error($"Error initializing HttpClient: {ex.Message}\n{ex.StackTrace}");
+                MainWindow.UpdateText("ERROR Initializing HTTP client. Please check the log.");
             }
             finally
             {

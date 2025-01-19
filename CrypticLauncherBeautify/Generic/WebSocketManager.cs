@@ -1,261 +1,123 @@
-﻿using CrypticLauncherBeautify.Core;
+﻿using System.Windows.Media;
 using log4net;
-using Newtonsoft.Json.Linq;
 using WebSocketSharp;
+using Newtonsoft.Json;
 
-public class WebSocketManager
+namespace StoPasswordBook.Generic
 {
-    private static readonly ILog Log = LogManager.GetLogger(typeof(WebSocketManager));
-    public static WebSocket? WebSocket;
-    
-    private static async Task SendWebSocketRequestAsync(JObject request)
+    public class WebSocketManager
     {
-        try
+        private static readonly ILog Log = LogManager.GetLogger(typeof(WebSocketManager));
+        private static string[] LastAccount { get; set; } = ["null", "null"];
+        public static WebSocket? WebSocket = null;
+
+        public static void InitWebSocket(string wsUrl)
         {
-            if (WebSocket != null && WebSocket.IsAlive)
-            {
-                WebSocket.Send(request.ToString());
-                Task.Delay(50).Wait();
-                Log.Info("Request sent: " + request["method"]?.ToString());
-            }
-            else
-            {
-                Log.Error("WebSocket is not connected.");
-            }
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"Error sending request: {ex.Message}", ex);
-        }
-    }
-    
-    private static JObject CreateEvaluateRequest(string expression, int id = 2)
-    {
-        return new JObject
-        {
-            { "id", id },
-            { "method", "Runtime.evaluate" },
-            { "params", new JObject
-                {
-                    { "expression", expression }
-                }
-            }
-        };
-    }
-    
-    private static JObject CreateCallFunctionRequest(string objectId, string functionDeclaration, int id = 2)
-    {
-        return new JObject
-        {
-            { "id", id },
-            { "method", "Runtime.callFunctionOn" },
-            { "params", new JObject
-                {
-                    { "objectId", objectId },
-                    { "functionDeclaration", "function() { return document.location.href; }" }
-                }
-            }
-        };
-    }
-    
-    public static async Task ChangeBackgroundAsync(string backgroundUrl)
-    {
-        string expression;
-        if (GlobalVariables.IsLoginPage)
-        {
-            expression = $"document.querySelector('section[style*=\"background-image: url(\\'/static/img/sto/bg-login.jpg\\')\"]').style.backgroundImage = \"url('{backgroundUrl}')\";";
-        }
-        else
-        {
-            expression = $"document.querySelector('section[style*=\"background-image: url(\\'/static/img/sto/bg-patching.jpg\\')\"]').style.backgroundImage = \"url('{backgroundUrl}')\";";
-        }
-        var request = CreateEvaluateRequest(expression);
-        await SendWebSocketRequestAsync(request);
-    }
-    
-    public static async Task ChangeCssHrefAsync(string newCssHref)
-    {
-        string expression = $"document.querySelector('link[rel=\"stylesheet\"][href=\"/static/css/sto.css?v3.4\"]').href = '{newCssHref}';\n;";
-        var request = CreateEvaluateRequest(expression);
-        await SendWebSocketRequestAsync(request);
-    }
-    
-    public static async Task GetReadyState()
-    {
-        string expression = "document.readyState;";
-        var request = CreateEvaluateRequest(expression);
-        await SendWebSocketRequestAsync(request);
-    }
-    
-    public static async Task GetHrefAsync(string objectId)
-    {
-        string expression = $"function() {{ return document.location.href; }}";
-        var request = CreateCallFunctionRequest(objectId, expression);
-        await SendWebSocketRequestAsync(request);
-    }
-    
-    public static async Task ChangeSubmitContentAsync(string content)
-    {
-        string expression;
-        if (GlobalVariables.IsLoginPage)
-        {
-            expression = $"document.querySelectorAll('input').forEach(input => {{ if (input.type === 'submit' && input.classList.contains('disabled') && input.value === 'Login') input.value = '{content}'; }});\n";
-        }
-        else
-        {
-            expression = $"document.querySelectorAll('input').forEach(input => {{ if (input.type === 'submit' && input.classList.contains('action') && input.value === 'Engage') input.value = '{content}'; }});\n";
-        }
-        
-        var request = CreateEvaluateRequest(expression);
-        await SendWebSocketRequestAsync(request);
-    }
-    
-    public static async Task ChangeArcIcon(string newIcon)
-    {
-        string expression = $"document.querySelector('img[alt=\"Arc Games\"]').src = '{newIcon}';" + $"document.querySelector('img[alt=\"Arc Games\"]').style.height = '20px';\n";
-        var request = CreateEvaluateRequest(expression);
-        await SendWebSocketRequestAsync(request);
-    }
-    
-    public static async Task ChangeServerNameAsync(string holodeckStr, string tribbleStr)
-    {
-        string expression = $"document.querySelectorAll('ul li').forEach(li => {{ if (li.getAttribute('data-shard') === 'Holodeck') li.textContent = '{holodeckStr}'; if (li.getAttribute('data-shard') === 'Tribble') li.textContent = '{tribbleStr}'; }});\n";
-        var request = CreateEvaluateRequest(expression);
-        await SendWebSocketRequestAsync(request);
-    }
-    
-    public static async Task ChangeLogoAsync(string newLogo)
-    {
-        var expression = $"document.querySelectorAll('img').forEach(img => {{ if (img.src.endsWith('/static/img/sto/logo.png')) {{ img.src = '{newLogo}'; img.style.height = '140px'; }} }});";
-        var request = CreateEvaluateRequest(expression);
-        await SendWebSocketRequestAsync(request);
-    }
-    
-    public static async Task ChangeHintAsync(string newHint)
-    {
-        try
-        {
-            var expression = $"document.querySelectorAll('h2').forEach(h2 => {{ if (h2.textContent.trim() === 'Log in with your account') h2.textContent = '{newHint}'; }});\n";
-            var request = CreateEvaluateRequest(expression);
-            await SendWebSocketRequestAsync(request);
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"Error sending evaluate request: {ex.Message}", ex);
-        }
-    }
-    
-    public static async Task ChangeAccAndPwdPlaceHolderAsync(string acc, string pwd)
-    {
-        try
-        {
-            var expression = $"document.querySelectorAll('input').forEach(input => {{ if (input.type === 'text' && input.name === 'username' && input.placeholder === 'Account Name / Email') input.placeholder = '{acc}'; if (input.type === 'password' && input.name === 'password' && input.placeholder === 'Password') input.placeholder = '{pwd}'; }});\n";
-            var request = CreateEvaluateRequest(expression);
-            await SendWebSocketRequestAsync(request);
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"Error sending evaluate request: {ex.Message}", ex);
-        }
-    }
-    
-    public static async Task ChangeH2ContentAsync(string value, string target)
-    {
-        try
-        {
-            var expression = $"document.querySelectorAll('h2').forEach(h2 => {{ if (h2.textContent.trim() === '{value}') h2.textContent = '{target}'; }});\n";
-            var request = CreateEvaluateRequest(expression);
-            await SendWebSocketRequestAsync(request);
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"Error sending evaluate request: {ex.Message}", ex);
-        }
-    }
-    
-    public static async Task ChangeHrefContentAsync(string href, string value, string target)
-    {
-        var expression = $"document.querySelectorAll('a').forEach(a => {{ if (a.href === '{href}' && a.textContent.trim() === '{value}') a.textContent = '{target}'; }});";
-        var request = CreateEvaluateRequest(expression);
-        await SendWebSocketRequestAsync(request);
-    }
-    
-    public static async Task GetLocationAsync()
-    {
-        var expression = "window.location;";
-        var request = CreateEvaluateRequest(expression);
-        await SendWebSocketRequestAsync(request);
-    }
-    
-    public static void InitWebSocket(string wsUrl)
-    {
-        try
-        {
-            if (WebSocket == null || !WebSocket.IsAlive)
+            if (WebSocket == null)
             {
                 WebSocket = new WebSocket(wsUrl);
                 WebSocket.OnMessage += OnMessage;
-
                 WebSocket.Connect();
-                Log.Info($"Initializing WebSocket to {wsUrl}");
+                Log.Info($"Initializing new WebSocket to {wsUrl}");
+            }
+
+            if (WebSocket.IsAlive == false)
+            {
+                WebSocket = new WebSocket(wsUrl);
+                WebSocket.OnMessage += OnMessage;
+                WebSocket.Connect();
+                Log.Info($"Initializing new but not first WebSocket to {wsUrl}");
             }
         }
-        catch (Exception ex)
+        
+        private static void OnMessage(object? sender, MessageEventArgs ev)
         {
-            Log.Error($"Error initializing WebSocket: {ex.Message}", ex);
-        }
-    }
-
-    private static void OnMessage(object? sender, MessageEventArgs ev)
-    {
-        try
-        {
-            JObject response = JObject.Parse(ev.Data);
-            Log.Info($"Response received: {response}");
-            ProcessResponse(response);
-        }
-        catch (Exception ex)
-        {
-            Log.Error($"Error processing message: {ex.Message}", ex);
-        }
-    }
-    
-    private static void ProcessResponse(JObject response)
-    {
-        if (response["result"] != null && response["result"]["result"] != null)
-        {
-            var result = response["result"]["result"];
-            
-            if (result["value"] != null)
+            try
             {
-                string value = result["value"].ToString().ToLowerInvariant();
+                var response = JsonConvert.DeserializeObject<dynamic>(ev.Data);
+                if (response != null)
+                {
+                    string rst = response.ToString();
+                    if (LastAccount[0] != "null" && LastAccount[1] != "null")
+                    {
+                        if (rst.Contains(LastAccount[0]))
+                        {
+                            rst = rst.Replace(LastAccount[0], "ACCOUNT_HIDDEN_DUE_TO_PRIVACY");
+                            Log.Info($"Response From Username Column: {rst}");
+                            
+                            MainWindow.UpdateText("Sent account and passwords to Launcher.", Brushes.CornflowerBlue);
+                            return;
+                        }
+
+                        if (rst.Contains(LastAccount[1]))
+                        {
+                            rst = rst.Replace(LastAccount[1], "PASSWORD_HIDDEN_DUE_TO_PRIVACY");
+                            Log.Info($"Response From Password Column: {rst}");
+                            
+                            MainWindow.UpdateText("Sent account and passwords to Launcher.", Brushes.CornflowerBlue);
+                            return;
+                        }
+                    }
+                    
+                    Log.Info($"Response: {rst}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Error processing WebSocket message: {ex.Message}");
+            }
+        }
+
+        public static bool SetUsernameAndPassword(WebSocket? webSocket, string? userStr, string? pwdStr)
+        {
+            try
+            {
+                if (webSocket == null)
+                {
+                    MainWindow.UpdateText("Websocket is null. Please try again.");
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(userStr) || string.IsNullOrEmpty(pwdStr))
+                {
+                    MainWindow.UpdateText("Account or Password is null or empty. Please check Shadow.xml");
+                    return false;
+                }
+
+                LastAccount = new[] { userStr, pwdStr };
+                LastAccount[0] = userStr;
+                LastAccount[1] = pwdStr;
+            
+                var setUsername = new
+                {
+                    id = 0,
+                    method = "Runtime.evaluate",
+                    @params = new
+                    {
+                        expression = $"document.querySelector('input[name=\"username\"]').value = \"{userStr}\";"
+                    }
+                };
+                webSocket.Send(JsonConvert.SerializeObject(setUsername));
+
+                var setPassword = new
+                {
+                    id = 1,
+                    method = "Runtime.evaluate",
+                    @params = new
+                    {
+                        expression = $"document.querySelector('input[name=\"password\"]').value = \"{pwdStr}\";"
+                    }
+                };
+                webSocket.Send(JsonConvert.SerializeObject(setPassword));
                 
-                if (value.Contains("complete"))
-                {
-                    GlobalVariables.IsLoaded = true;
-                }
-                else
-                {
-                    GlobalVariables.IsLoaded = false;
-                }
-
-                if (value.Contains("http"))
-                {
-                    GlobalVariables.ReceivedValue = value;
-                }
+                return true;
             }
-            
-            if (result["objectId"] != null)
+            catch (Exception ex)
             {
-                GlobalVariables.ObjectId = result["objectId"].ToString();
+                Log.Error(ex.Message + ex.StackTrace);
+                MainWindow.UpdateText($"{ex.Message}", Brushes.Red);
+                return false;
             }
-            /*if (result["value"] != null && result["value"].ToString().Contains("<html>"))
-            {
-                string htmlContent = result["value"].ToString();
-                var htmlDoc = new HtmlDocument();
-                htmlDoc.LoadHtml(htmlContent);
-                GlobalVariables.ReceivedValue = htmlDoc.DocumentNode.OuterHtml;
-            }*/
         }
     }
 }
