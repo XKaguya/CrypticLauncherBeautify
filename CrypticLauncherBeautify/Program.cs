@@ -17,6 +17,8 @@ public class Program
     
     public static async Task Main(string[] args)
     {
+        ThemeManager.CreatDefaultTheme();
+        
         var themeOption = new Option<string>(
             new[] { "-t", "--Theme" },
             description: "The name of the theme to load.");
@@ -57,8 +59,6 @@ public class Program
         }
         
         await Api.InitApi();
-        
-        ThemeManager.CreatDefaultTheme();
         ThemeManager.ParseAllTheme();
         
         DisplayThemes();
