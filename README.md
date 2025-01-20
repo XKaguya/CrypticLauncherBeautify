@@ -15,7 +15,7 @@ Currently only work for Star Trek Online.
 ### Auto Start
 1. Download from [Releases](https://github.com/XKaguya/CrypticLauncherBeautify/releases/latest).
 2. Open Cmd or PowerShell near the `.exe` file.
-4. Type: `CrypticLauncherBeautify.exe -t / --Theme / ThemeName`.
+4. Type: `CrypticLauncherBeautify.exe -t / --Theme`.
 
 ### Manual Start
 1. Download from [Releases](https://github.com/XKaguya/CrypticLauncherBeautify/releases/latest).
@@ -27,7 +27,6 @@ Currently only work for Star Trek Online.
 ### Examples:
 * `CrypticLauncherBeautify.exe -t Default`
 * `CrypticLauncherBeautify.exe --Theme Default`
-* `CrypticLauncherBeautify.exe Default`
 
 All of the above are equivalent but differ in syntax.
 
