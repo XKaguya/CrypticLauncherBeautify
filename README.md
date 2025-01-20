@@ -12,9 +12,17 @@ A tool that allows you to change the Cryptic Game Launcher's theme.
 Currently only work for Star Trek Online.
 
 ## Usage
+### Auto Start
+1. Download from [Releases](https://github.com/XKaguya/CrypticLauncherBeautify/releases/latest).
+2. Open Cmd or PowerShell near the `.exe` file.
+4. Type: `CrypticLauncherBeautify.exe -t / --Theme / ThemeName`.
+
+### Manual Start
 1. Download from [Releases](https://github.com/XKaguya/CrypticLauncherBeautify/releases/latest).
 2. Open Cmd or PowerShell near the `.exe` file.
 3. Type: `CrypticLauncherBeautify.exe -t / --Theme / ThemeName`.
+4. Go to the STO root folder, which should look like this: `Steam\steamapps\common\Star Trek Online`.
+5. Right-click a blank space, open Cmd or PowerShell here, and type: `Star Trek Online.exe --remote-debugging-port=port`. The `port` can be any value if no process is being accessed.
 
 ### Examples:
 * `CrypticLauncherBeautify.exe -t Default`
