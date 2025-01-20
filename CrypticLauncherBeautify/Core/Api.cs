@@ -19,7 +19,7 @@ public class Api
     {
         ProcessStartInfo processStartInfo = new ProcessStartInfo();
         processStartInfo.FileName = "cmd.exe";
-        processStartInfo.Arguments = "/C wmic process where \"caption='Star Trek Online.exe'\" get caption,commandline /value";
+        processStartInfo.Arguments = "/C wmic process where caption=\"Star Trek Online.exe\" get caption,commandline,processId /value";
         processStartInfo.RedirectStandardOutput = true;
         processStartInfo.CreateNoWindow = true;
 
@@ -41,11 +41,45 @@ public class Api
             if (match.Success)
             {
                 string portValue = match.Groups[1].Value;
-                return int.Parse(portValue);
+                int port = int.Parse(portValue);
+                int pid = GetPidByPort(port);
+
+                if (pid != -1)
+                {
+                    GlobalVariables.SavedProcess = Process.GetProcessById(pid);
+                }
+                
+                return port;
             }
         }
 
         return 0;
+    }
+    
+    private static int GetPidByPort(int port)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "cmd.exe",
+            Arguments = $"/C netstat -ano | findstr {port}",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        using var process = Process.Start(startInfo);
+        using var reader = process.StandardOutput;
+        string output = reader.ReadToEnd();
+        string[] lines = output.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+        if (lines.Length > 0)
+        {
+            string[] columns = lines[0].Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string pid = columns.Last();
+            return int.Parse(pid);
+        }
+
+        return -1;
     }
 
     private static async Task<bool> Locate()
@@ -104,61 +138,12 @@ public class Api
     public static async Task InitApi()
     {
         int port = GetDebugPort();
-        if (port == 0)
-        {
-            try
-            {
-                if (GlobalVariables.LauncherPath == "null" || !File.Exists(GlobalVariables.LauncherPath))
-                {
-                    Log.Error("LauncherPath is missing.");
-                    Log.Warn($"LauncherPath {GlobalVariables.LauncherPath} not found.");
-                    Console.WriteLine("LauncherPath is missing.");
-                    Console.WriteLine($"LauncherPath {GlobalVariables.LauncherPath} not found.");
-                    Environment.Exit(-1);
-                }
-
-                int availablePort = GetAvailablePort();
-                GlobalVariables.DebugPort = availablePort;
-
-                if (!File.Exists(GlobalVariables.LauncherPath))
-                {
-                    return;
-                }
-
-                var processStartInfo = new ProcessStartInfo
-                {
-                    FileName = GlobalVariables.LauncherPath,
-                    Arguments = $"--remote-debugging-port={GlobalVariables.DebugPort}",
-                };
-
-                Process? process = null;
-
-                try
-                {
-                    process = Process.Start(processStartInfo);
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex.Message + ex.StackTrace);
-                }
-
-                if (process == null)
-                {
-                    return;
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error(e);
-            }
-        }
-        else
+        if (port != 0)
         {
             GlobalVariables.DebugPort = port;
+            await HttpClientManager.InitHttpClient();
+            await RetryLocate();
         }
-
-        await HttpClientManager.InitHttpClient();
-        await RetryLocate();
     }
         
     private static int GetAvailablePort()
@@ -182,7 +167,6 @@ public class Api
 
             if (!success)
             {
-                Log.Error("Locate failed. Retrying...");
                 await Task.Yield();
             }
         }
@@ -255,9 +239,10 @@ public class Api
     {
         try
         {
-            if (!WebSocketManager.WebSocket.IsAlive)
+            if (WebSocketManager.WebSocket == null || !WebSocketManager.WebSocket.IsAlive)
             {
                 Log.Warn("WebSocket is not connected.");
+                return;
             }
             
             await Task.WhenAll(
@@ -290,9 +275,10 @@ public class Api
     {
         try
         {
-            if (!WebSocketManager.WebSocket.IsAlive)
+            if (WebSocketManager.WebSocket == null || !WebSocketManager.WebSocket.IsAlive)
             {
                 Log.Warn("WebSocket is not connected.");
+                return;
             }
 
             await Task.WhenAll(
@@ -322,7 +308,7 @@ public class Api
     
     public static async Task<bool> IsLoaded()
     {
-        while (!GlobalVariables.IsLoaded)
+        while (WebSocketManager.WebSocket != null && !WebSocketManager.WebSocket.IsAlive && !GlobalVariables.IsLoaded)
         {
             await WebSocketManager.GetReadyState();
             await Task.Delay(1000);
@@ -331,33 +317,15 @@ public class Api
         return true;
     }
     
-    public static async Task<bool> IsUrlChanged(CancellationTokenSource cts)
+    public static async Task<bool> IsUrlChanged()
     {
-        while (!cts.IsCancellationRequested)
+        await WebSocketManager.GetLocationAsync();
+        await WebSocketManager.GetHrefAsync(GlobalVariables.ObjectId);
+
+        if (GlobalVariables.PreviousUrl != GlobalVariables.ReceivedValue)
         {
-            await WebSocketManager.GetLocationAsync();
-            await WebSocketManager.GetHrefAsync(GlobalVariables.ObjectId);
-            
-#if DEBUG
-            if (GlobalVariables.PreviousUrl == GlobalVariables.ReceivedValue)
-            {
-                Console.WriteLine($"Previous Url: {GlobalVariables.PreviousUrl} Received value: {GlobalVariables.ReceivedValue}, Has not changed.");
-            }
-            else
-            {
-                Console.WriteLine($"Previous Url: {GlobalVariables.PreviousUrl} Received value: {GlobalVariables.ReceivedValue} Changed.");
-                GlobalVariables.PreviousUrl = GlobalVariables.ReceivedValue;
-                return true;
-            }
-#elif RELEASE
-            if (GlobalVariables.PreviousUrl != GlobalVariables.ReceivedValue)
-            {
-                GlobalVariables.PreviousUrl = GlobalVariables.ReceivedValue;
-                return true;
-            }
-#endif
-            
-            await Task.Delay(100);
+            GlobalVariables.PreviousUrl = GlobalVariables.ReceivedValue;
+            return true;
         }
 
         return false;

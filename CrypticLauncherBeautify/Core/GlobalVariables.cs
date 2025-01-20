@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using CrypticLauncherBeautify.Generic;
 
 namespace CrypticLauncherBeautify.Core;
@@ -13,8 +14,6 @@ public class GlobalVariables
     public static string DebugUrl { get; set; } = string.Empty;
     [SettingManager.IgnoreSetting]
     public static int DebugPort { get; set; }
-    [Description("Set STO Launcher, The Star Trek Online.exe. \nDefault value: SET_YOUR_STO_LAUNCHER_PATH_HERE")]
-    public static string LauncherPath { get; set; } = "SET_YOUR_STO_LAUNCHER_PATH_HERE";
     [SettingManager.IgnoreSetting]
     public static string ObjectId { get; set; } = string.Empty;
     [SettingManager.IgnoreSetting]
@@ -25,4 +24,6 @@ public class GlobalVariables
     public static bool IsLoaded { get; set; }
     [SettingManager.IgnoreSetting]
     public static string PreviousUrl { get; set; } = string.Empty;
+    [SettingManager.IgnoreSetting]
+    public static Process? SavedProcess { get; set; } = null;
 }

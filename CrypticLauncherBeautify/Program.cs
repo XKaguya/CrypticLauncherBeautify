@@ -1,19 +1,20 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using System.Reflection;
 using CrypticLauncherBeautify.Core;
 using CrypticLauncherBeautify.Extern;
 using CrypticLauncherBeautify.Generic;
 using log4net;
 using log4net.Config;
+using WebSocketSharp;
 
 namespace CrypticLauncherBeautify;
 
 public class Program
 {
     private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
-    private static CancellationTokenSource _cts = new();
-    public const string Version = "1.0.0";
+    public const string Version = "1.0.1";
     
     public static async Task Main(string[] args)
     {
@@ -33,7 +34,7 @@ public class Program
         rootCommand.SetHandler(async (InvocationContext context) =>
         {
             var theme = context.ParseResult.GetValueForOption(themeOption);
-            
+
             await Init(theme);
         });
 
@@ -58,27 +59,57 @@ public class Program
             Environment.Exit(0);
         }
         
-        await Api.InitApi();
         ThemeManager.ParseAllTheme();
         
         DisplayThemes();
         
-        if (await Api.IsLoaded())
+        await TheRing(theme);
+    }
+
+    private static async Task TheRing(string theme)
+    {
+        try
         {
-            await HandlePageThemeChange(theme);
+            await Api.InitApi();
             
-            while (!_cts.Token.IsCancellationRequested)
+            while (true)
             {
-                if (await Api.IsUrlChanged(_cts))
+                while (true)
                 {
-                    if (await Api.IsLoaded())
+                    if (GlobalVariables.SavedProcess == null || GlobalVariables.SavedProcess.Id == -1 || !GlobalVariables.SavedProcess.Responding || WebSocketManager.WebSocket == null || !WebSocketManager.WebSocket.IsAlive)
                     {
-                        await HandlePageThemeChange(theme);
+                        GlobalVariables.ReceivedValue = String.Empty;
+                        GlobalVariables.PreviousUrl = String.Empty;
+                        GlobalVariables.SavedProcess = null;
+                        WebSocketManager.WebSocket = null;
+                        
+                        break;
                     }
-                }
+                    
+                    if (await Api.IsUrlChanged())
+                    {
+                        if (await Api.IsLoaded())
+                        {
+                            await HandlePageThemeChange(theme);
+                        }
+                    }
                 
-                await Task.Delay(500);
+                    await Task.Delay(500);
+                }
+
+                GlobalVariables.ReceivedValue = String.Empty;
+                GlobalVariables.PreviousUrl = String.Empty;
+                GlobalVariables.SavedProcess = null;
+                WebSocketManager.WebSocket = null;
+                break;
             }
+            
+            await TheRing(theme);
+        }
+        catch (WebSocketException e)
+        {
+            Console.WriteLine(e);
+            await TheRing(theme);
         }
     }
 

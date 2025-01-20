@@ -6,7 +6,7 @@ public class LoginPage
     public string ThemeName { get; set; } = "Default";
     public string ArcIcon { get; set; } = "/static/img/publisher.png";
     public string CssLink { get; set; } = "/static/css/sto.css?v3.4";
-    public string ForumString { get; set; } = "Forum";
+    public string ForumString { get; set; } = "Forums";
     public string SupportString { get; set; } = "Support";
     public string AccountGuardString { get; set; } = "Account Guard";
     public string OptionString { get; set; } = "Options";

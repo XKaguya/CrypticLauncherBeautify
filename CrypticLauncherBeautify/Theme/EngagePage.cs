@@ -13,7 +13,7 @@ public class EngagePage
     public string ReleaseNoteString { get; set; } = "Release Notes";
     public string MyAccountString { get; set; } = "My Account";
     public string BackgroundString { get; set; } = "/static/img/sto/bg-login.jpg";
-    public string EngageContentString { get; set; } = "Login";
+    public string EngageContentString { get; set; } = "Engage";
     public string ShardContentString { get; set; } = "Shard";
     public string NewsContentString { get; set; } = "News";
     public string ViewAllNewsContentString { get; set; } = "View All";
