@@ -1,6 +1,5 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Diagnostics;
 using System.Reflection;
 using CrypticLauncherBeautify.Core;
 using CrypticLauncherBeautify.Extern;
@@ -14,7 +13,7 @@ namespace CrypticLauncherBeautify;
 public class Program
 {
     private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
-    public const string Version = "1.0.1";
+    public const string Version = "1.0.2";
     
     public static async Task Main(string[] args)
     {
@@ -62,8 +61,40 @@ public class Program
         ThemeManager.ParseAllTheme();
         
         DisplayThemes();
-        
-        await TheRing(theme);
+
+        if (GlobalVariables.LauncherMode)
+        {
+            await NotTheRing(theme);
+        }
+        else
+        {
+            await TheRing(theme);
+        }
+    }
+
+    private static async Task NotTheRing(string theme)
+    {
+        await Api.InitApi(true);
+
+        while (true)
+        {
+            if (GlobalVariables.SavedProcess == null || GlobalVariables.SavedProcess.Id == -1 || !GlobalVariables.SavedProcess.Responding || WebSocketManager.WebSocket == null || !WebSocketManager.WebSocket.IsAlive)
+            {
+                Console.WriteLine("STO Launcher has exited.");
+                Log.Info("STO Launcher has exited.");
+                Environment.Exit(1);
+            }
+            
+            if (await Api.IsUrlChanged())
+            {
+                if (await Api.IsLoaded())
+                {
+                    await HandlePageThemeChange(theme);
+                }
+            }
+                
+            await Task.Delay(500);
+        }
     }
 
     private static async Task TheRing(string theme)

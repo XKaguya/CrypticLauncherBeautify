@@ -145,6 +145,48 @@ public class Api
             await RetryLocate();
         }
     }
+    
+    public static async Task InitApi(bool launcherMode)
+    {
+        if (!File.Exists(GlobalVariables.LauncherPath))
+        {
+            Log.Warn($"LauncherPath: {GlobalVariables.LauncherPath} not found.");
+            Console.WriteLine($"LauncherPath: {GlobalVariables.LauncherPath} not found.");
+            Console.WriteLine($"Please set correct launcher path.");
+            Environment.Exit(-1);
+        }
+        
+        int availablePort = GetAvailablePort();
+        GlobalVariables.DebugPort = availablePort;
+        
+        var processStartInfo = new ProcessStartInfo
+        {
+            FileName = GlobalVariables.LauncherPath,
+            Arguments = $"--remote-debugging-port={GlobalVariables.DebugPort}",
+        };
+
+        Process? process = null;
+
+        try
+        {
+            process = Process.Start(processStartInfo);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex.Message + ex.StackTrace);
+        }
+
+        if (process == null)
+        {
+            Console.WriteLine($"Process is null. Please try again.");
+            Log.Error($"Process is null. Please try again.");
+            return;
+        }
+
+        GlobalVariables.SavedProcess = process;
+        await HttpClientManager.InitHttpClient();
+        await RetryLocate();
+    }
         
     private static int GetAvailablePort()
     {
