@@ -17,10 +17,11 @@ Currently, it only works for **Star Trek Online**.
 Ring Mode is an eternal loop that continuously searches for the STO Launcher via the command line. This mode ensures that the program keeps checking for the launcher.
 
 Launcher Mode uses CrypticLauncherBeautify as the launcher. In this mode, CrypticLauncherBeautify will initiate the STO Launcher automatically.
-### Auto Update
+
+## Auto Update
 Recommend using the Auto Update feature for faster updates and automatic updating.
 
-#### Auto Update Usage:
+### Auto Update Usage:
 1. Download `CommonUpdater.exe` from the [CommonUpdater](https://github.com/XKaguya/CommonUpdater/releases/latest) release page.
 2. Place `CommonUpdater.exe` near the project `.exe` file.
 
