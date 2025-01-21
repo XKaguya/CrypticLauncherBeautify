@@ -22,8 +22,8 @@ Recommend using the Auto Update feature for faster updates and automatic updatin
 2. Place `CommonUpdater.exe` near the project `.exe` file.
 
 ---
-
-### Auto Start
+### Ring Mode
+#### Auto Start
 1. Download the latest release from [Releases](https://github.com/XKaguya/CrypticLauncherBeautify/releases/latest).
 2. Open Cmd or PowerShell near the `.exe` file.
 3. Type the following command:
@@ -33,7 +33,7 @@ Recommend using the Auto Update feature for faster updates and automatic updatin
 
 ---
 
-### Manual Start
+#### Manual Start
 1. Download the latest release from [Releases](https://github.com/XKaguya/CrypticLauncherBeautify/releases/latest).
 2. Open Cmd or PowerShell near the `.exe` file.
 3. Type the following command:
@@ -51,6 +51,27 @@ Recommend using the Auto Update feature for faster updates and automatic updatin
    - The `port` can be any value if no process is being accessed.
 
 ---
+### Launcher Mode
+1. Setup configs correctly:
+```
+<Settings>
+  <!--Set to true to allow program self update. -->
+  <!--Default value: true-->
+  <AutoUpdate>true</AutoUpdate>
+  <!--Set to true to change to Launcher mode.-->
+  <!--Launcher mode is let Cryptic Launcher Beautify launch the STO Launcher. -->
+  <!--Default value: false-->
+  <LauncherMode>true</LauncherMode>
+  <!--Set STO Launcher, the Star Trek Online.exe. -->
+  <!--Default value: SET_YOUR_STO_LAUNCHER_PATH_HERE-->
+  <LauncherPath>C:\Program Files (x86)\Steam\steamapps\common\Star Trek Online\Star Trek Online.exe</LauncherPath>
+</Settings>
+```
+2. Open Cmd or PowerShell near the `.exe` file.
+3. Type the following command:
+   ```bash
+   CrypticLauncherBeautify.exe -t / --Theme
+   ```
 
 ### Examples
 You can run the following commands:
