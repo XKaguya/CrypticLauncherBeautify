@@ -21,7 +21,7 @@ Launcher Mode uses CrypticLauncherBeautify as the launcher. In this mode, Crypti
 ## Auto Update
 Recommend using the Auto Update feature for faster updates and automatic updating.
 
-### Auto Update Usage:
+### Auto Update Usage
 1. Download `CommonUpdater.exe` from the [CommonUpdater](https://github.com/XKaguya/CommonUpdater/releases/latest) release page.
 2. Place `CommonUpdater.exe` near the project `.exe` file.
 
