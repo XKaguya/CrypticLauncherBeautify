@@ -93,6 +93,23 @@ You can modify almost everything you've seen, but some elements are defined in t
 ### **Important Note**
 For the CSS file, you'll need a Public IPv4 server with an SSL certificate, and then you can modify it.
 
+### Theme
+Theme should place in `Theme` folder.
+```
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----         2025/1/19     19:52                Default
+d-----         2025/1/19     19:49                AnotherTheme
+```
+
+In the Theme folder
+```
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----         2025/1/21     16:10            976 EngagePageTheme.xml
+-a----         2025/1/21     16:10           1048 LoginPageTheme.xml
+```
+
 ### Default Theme Template
 ```
 <?xml version="1.0" encoding="utf-8"?>
