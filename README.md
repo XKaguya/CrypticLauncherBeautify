@@ -15,7 +15,7 @@ Currently, it only works for **Star Trek Online**.
 ## Usage
 
 ### Auto Update
-We recommend using the Auto Update feature for faster updates and automatic updating.
+Recommend using the Auto Update feature for faster updates and automatic updating.
 
 #### Auto Update Usage:
 1. Download `CommonUpdater.exe` from the [CommonUpdater](https://github.com/XKaguya/CommonUpdater/releases/latest) release page.
