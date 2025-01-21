@@ -13,7 +13,10 @@ A tool that allows you to change the Cryptic Game Launcher's theme.
 Currently, it only works for **Star Trek Online**.
 
 ## Usage
+## Mode Difference
+Ring Mode is an eternal loop that continuously searches for the STO Launcher via the command line. This mode ensures that the program keeps checking for the launcher.
 
+Launcher Mode uses CrypticLauncherBeautify as the launcher. In this mode, CrypticLauncherBeautify will initiate the STO Launcher automatically.
 ### Auto Update
 Recommend using the Auto Update feature for faster updates and automatic updating.
 
