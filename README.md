@@ -65,8 +65,8 @@ Both commands are equivalent, but the syntax differs slightly.
 ### Notes:
 You can modify almost everything you've seen, but some elements are defined in the **CSS file**.
 
-**Important:** For the CSS file, you'll need a Public IPv4 server with an SSL certificate, and the ability to modify it.
-
+### **Important Note:**
+For the CSS file, you'll need a Public IPv4 server with an SSL certificate, and then you can modify it.
 
 ### Default Theme Template
 ```
