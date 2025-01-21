@@ -1,5 +1,5 @@
 <div align="center">
-
+  
 [![Version](https://img.shields.io/github/v/release/XKaguya/CrypticLauncherBeautify?sort=semver&style=flat-square&color=8DBBE9&label=Version)]()
 [![GitHub Issues](https://img.shields.io/github/issues/XKaguya/CrypticLauncherBeautify/total?style=flat-square&label=Issues&color=d77982)](https://github.com/XKaguya/CrypticLauncherBeautify)
 ![Downloads](https://img.shields.io/github/downloads/XKaguya/CrypticLauncherBeautify/total?style=flat-square&label=Downloads&color=d77982)
@@ -7,32 +7,66 @@
 </div>
 
 # CrypticLauncherBeautify
+
 A tool that allows you to change the Cryptic Game Launcher's theme.
 
-Currently only work for Star Trek Online.
+Currently, it only works for **Star Trek Online**.
 
 ## Usage
+
+### Auto Update
+We recommend using the Auto Update feature for faster updates and automatic updating.
+
+#### Auto Update Usage:
+1. Download `CommonUpdater.exe` from the [CommonUpdater](https://github.com/XKaguya/CommonUpdater/releases/latest) release page.
+2. Place `CommonUpdater.exe` near your project `.exe` file.
+
+---
+
 ### Auto Start
-1. Download from [Releases](https://github.com/XKaguya/CrypticLauncherBeautify/releases/latest).
+1. Download the latest release from [Releases](https://github.com/XKaguya/CrypticLauncherBeautify/releases/latest).
 2. Open Cmd or PowerShell near the `.exe` file.
-4. Type: `CrypticLauncherBeautify.exe -t / --Theme`.
+3. Type the following command:
+   ```bash
+   CrypticLauncherBeautify.exe -t / --Theme
+   ```
+
+---
 
 ### Manual Start
-1. Download from [Releases](https://github.com/XKaguya/CrypticLauncherBeautify/releases/latest).
+1. Download the latest release from [Releases](https://github.com/XKaguya/CrypticLauncherBeautify/releases/latest).
 2. Open Cmd or PowerShell near the `.exe` file.
-3. Type: `CrypticLauncherBeautify.exe -t / --Theme / ThemeName`.
-4. Go to the STO root folder, which should look like this: `Steam\steamapps\common\Star Trek Online`.
-5. Right-click a blank space, open Cmd or PowerShell here, and type: `Star Trek Online.exe --remote-debugging-port=port`. The `port` can be any value if no process is being accessed.
+3. Type the following command:
+   ```bash
+   CrypticLauncherBeautify.exe -t / --Theme / ThemeName
+   ```
+4. Go to the STO root folder, which should look like:
+   ```plaintext
+   Steam\steamapps\common\Star Trek Online
+   ```
+5. Right-click a blank space, open Cmd or PowerShell here, and type:
+   ```bash
+   Star Trek Online.exe --remote-debugging-port=port
+   ```
+   - The `port` can be any value if no process is being accessed.
+
+---
 
 ### Examples:
-* `CrypticLauncherBeautify.exe -t Default`
-* `CrypticLauncherBeautify.exe --Theme Default`
+You can run the following commands:
 
-All of the above are equivalent but differ in syntax.
+- `CrypticLauncherBeautify.exe -t Default`
+- `CrypticLauncherBeautify.exe --Theme Default`
 
-You can change almost everything you've seen, But something is defined in the css file.
+Both commands are equivalent, but the syntax differs slightly.
 
-*However, for css file, You need a Public IPv4 Server with SSL certificate that you're able to modify it.*
+---
+
+### Notes:
+You can modify almost everything you've seen, but some elements are defined in the **CSS file**.
+
+**Important:** For the CSS file, you'll need a Public IPv4 server with an SSL certificate, and the ability to modify it.
+
 
 ### Default Theme Template
 ```
