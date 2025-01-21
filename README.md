@@ -52,7 +52,7 @@ We recommend using the Auto Update feature for faster updates and automatic upda
 
 ---
 
-### Examples:
+### Examples
 You can run the following commands:
 
 - `CrypticLauncherBeautify.exe -t Default`
@@ -62,10 +62,10 @@ Both commands are equivalent, but the syntax differs slightly.
 
 ---
 
-### Notes:
+### Notes
 You can modify almost everything you've seen, but some elements are defined in the **CSS file**.
 
-### **Important Note:**
+### **Important Note**
 For the CSS file, you'll need a Public IPv4 server with an SSL certificate, and then you can modify it.
 
 ### Default Theme Template
