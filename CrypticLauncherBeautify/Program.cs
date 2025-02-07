@@ -13,7 +13,7 @@ namespace CrypticLauncherBeautify;
 public class Program
 {
     private static readonly ILog Log = LogManager.GetLogger(typeof(Program));
-    public const string Version = "1.0.2";
+    public const string Version = "1.0.3";
     
     public static async Task Main(string[] args)
     {
